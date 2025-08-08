@@ -1,0 +1,38 @@
+<div class="prepare-container">
+  <h2>🎯 Đặt thuyền chiến</h2>
+
+  <div class="controls">
+    <button (click)="rotateDirection()">
+      🔄 Xoay thuyền ({{ direction === 'horizontal' ? 'ngang' : 'dọc' }})
+    </button>
+    <button (click)="confirmSetup()">✅ Sẵn sàng</button>
+  </div>
+
+  <div class="ship-selection">
+    <div class="ship" *ngFor="let type of shipTypes">
+      <img
+        [src]="'assets/ships/' + type + '.png'"
+        [alt]="type"
+        draggable="true"
+        (dragstart)="startDrag(type)"
+      />
+      <span>{{ shipSizes[type] }} ô</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div
+      class="cell"
+      *ngFor="let cell of grid; let i = index"
+      (dragover)="allowDrop($event)"
+      (drop)="dropShip(i)"
+      [ngClass]="{ occupied: cell !== '' }"
+    >
+      <img
+        *ngIf="cell !== ''"
+        [src]="'assets/ships/' + cell + '.png'"
+        [alt]="cell"
+      />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.game-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  grid-gap: 5px;
+  margin-top: 10px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  background-color: #ccc;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.cell.hit {
+  background-color: red;
+}
+
+.cell.miss {
+  background-color: blue;
+}

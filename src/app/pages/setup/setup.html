@@ -1,0 +1,30 @@
+<div class="setup-container">
+  <h2>Phòng chơi</h2>
+
+  <label>
+    Tên người chơi:
+    <input [(ngModel)]="playerName" placeholder="Nhập tên..." />
+  </label>
+
+  <div class="actions">
+    <button (click)="createRoom()">Tạo phòng</button>
+  </div>
+
+  <hr />
+
+  <label>
+    Nhập mã phòng để tham gia:
+    <input [(ngModel)]="roomCode" placeholder="Mã phòng..." />
+  </label>
+
+  <button (click)="joinRoom()">Vào phòng</button>
+
+  <div *ngIf="roomCode">
+    <hr />
+    <p><strong>Mã phòng:</strong> {{ roomCode }}</p>
+    <p><strong>Người chơi:</strong> {{ players.join(', ') }}</p>
+
+    <p *ngIf="!canStart">Đang chờ người chơi khác...</p>
+    <button *ngIf="canStart" (click)="startGame()">Bắt đầu</button>
+  </div>
+</div>

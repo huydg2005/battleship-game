@@ -19,12 +19,24 @@
 
   <button (click)="joinRoom()">Vào phòng</button>
 
-  <div *ngIf="roomCode">
+  @if (roomCode) {
     <hr />
     <p><strong>Mã phòng:</strong> {{ roomCode }}</p>
-    <p><strong>Người chơi:</strong> {{ players.join(', ') }}</p>
 
-    <p *ngIf="!canStart">Đang chờ người chơi khác...</p>
-    <button *ngIf="canStart" (click)="startGame()">Bắt đầu</button>
-  </div>
+    @if (players.length > 0) {
+      <p><strong>Người chơi:</strong></p>
+      <ul>
+        @for (player of players; track player.uid) {
+        <li>{{ player.name }}</li>
+       }
+
+      </ul>
+    }
+
+    @if (!canStart) {
+      <p>Đang chờ người chơi khác...</p>
+    } @else {
+      <button (click)="startGame()">Bắt đầu</button>
+    }
+  }
 </div>

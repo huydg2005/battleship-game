@@ -1,29 +1,30 @@
-.game-container {
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
-}
-
-.grid {
+.cells {
   display: grid;
   grid-template-columns: repeat(10, 30px);
-  grid-gap: 5px;
-  margin-top: 10px;
+  gap: 4px;
 }
-
-.cell {
+.cells div {
   width: 30px;
   height: 30px;
-  background-color: #ccc;
   text-align: center;
   line-height: 30px;
-  cursor: pointer;
+  border: 1px solid #ccc;
+  font-size: 18px;
 }
-
-.cell.hit {
+.ship {
+  background-color: #aaa;
+}
+.hit {
   background-color: red;
+  color: white;
 }
-
-.cell.miss {
-  background-color: blue;
+.miss {
+  background-color: lightblue;
+}
+.unknown {
+  background-color: #f5f5f5;
+}
+.clickable {
+  cursor: pointer;
+  background-color: #eef;
 }

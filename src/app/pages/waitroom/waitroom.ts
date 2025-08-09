@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 export class WaitRoom implements OnInit {
   roomId = '';
   room$: Observable<any> | null = null;
-  players: string[] = [];
+  players: { id: string; name: string; ready: boolean }[] = [];
   host = '';
   currentPlayer = '';
   isHost = false;
@@ -42,13 +42,28 @@ export class WaitRoom implements OnInit {
     const roomRef = doc(this.firestore, 'rooms', this.roomId);
     this.room$ = docData(roomRef);
 
-    this.room$.subscribe(data => {
-      this.players = data?.['players'] || [];
-      this.host = data?.['host'] || '';
+    this.room$.subscribe((data: any) => {
+      if (!data) return;
+
+      this.host = data.host || '';
       this.isHost = this.currentPlayer === this.host;
 
-      if (data?.['status'] === 'prepare') {
-        this.router.navigate(['/prepare'], { queryParams: { roomId: this.roomId } });
+      // Chuyển players map -> array
+      if (data.players && typeof data.players === 'object') {
+        this.players = Object.entries(data.players).map(([id, info]: [string, any]) => ({
+          id,
+          name: info?.name || '',
+          ready: info?.ready || false
+        }));
+      } else {
+        this.players = [];
+      }
+
+      // Nếu host đã start game
+      if (data.status === 'prepare') {
+        this.router.navigate(['/prepare'], {
+          queryParams: { roomId: this.roomId }
+        });
       }
     });
   }

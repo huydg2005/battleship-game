@@ -16,13 +16,14 @@ export class Login {
       const result = await signInWithPopup(this.auth, new GoogleAuthProvider());
       const user = result.user;
 
-      // Lưu tên người chơi
+      // Lưu thông tin người chơi
       localStorage.setItem('playerName', user.displayName || 'Ẩn danh');
+      localStorage.setItem('playerUid', user.uid);
 
-      console.log('Đăng nhập thành công, điều hướng đến /setup');
-      this.router.navigate(['/setup']); // 👈 Điều hướng đến trang chọn chế độ
+      console.log('✅ Đăng nhập thành công:', user.displayName);
+      this.router.navigate(['/setup']);
     } catch (error) {
-      console.error('Lỗi đăng nhập:', error);
+      console.error('❌ Lỗi đăng nhập:', error);
       alert('Đăng nhập thất bại. Vui lòng thử lại!');
     }
   }

@@ -1,18 +1,23 @@
-<div class="waitroom-container">
-  <h2>Phòng chờ: {{ roomId }}</h2>
-
-  <p>Người chơi hiện tại: {{ currentPlayer }}</p>
+<div class="wait-room">
+  <h2>Mã phòng: {{ roomId }}</h2>
   <p>Chủ phòng: {{ host }}</p>
 
-  <ul class="player-list">
-    <li *ngFor="let player of players">
-      👤 {{ player }}
-    </li>
+  <h3>Danh sách người chơi</h3>
+  <ul>
+    @for (player of players; track player.id) {
+      <li>
+        {{ player.name }}
+        <span *ngIf="player.ready">✅ Sẵn sàng</span>
+        <span *ngIf="!player.ready">⏳ Chưa sẵn sàng</span>
+      </li>
+    }
   </ul>
 
-  <button *ngIf="isHost" (click)="startGame()" class="start-button">
-    🚀 Bắt đầu trò chơi
-  </button>
-
-  <p *ngIf="!isHost">Đang chờ chủ phòng bắt đầu...</p>
+  @if (isHost) {
+    <button (click)="startGame()" [disabled]="players.length < 2">
+      🚀 Bắt đầu trò chơi
+    </button>
+  } @else {
+    <p>Chờ chủ phòng bắt đầu...</p>
+  }
 </div>

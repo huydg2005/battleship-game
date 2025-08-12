@@ -265,4 +265,10 @@ export class Prepare implements OnInit {
   isShipPlaced(type: string): boolean {
     return this.placedShips.some(ship => ship.type === type);
   }
+  resetBoard() {
+  this.grid = Array(100).fill('');
+  this.placedShips = [];
+  this.draggingShip = '';
+}
+
 }

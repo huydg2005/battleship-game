@@ -166,10 +166,12 @@ export class GameBoard implements OnInit, OnDestroy {
     }
 
     for (const ship of this.opponentShips) {
-      const isDestroyed = ship.positions.every(pos => opponentData.hitsReceived.includes(pos));
-      if (isDestroyed) {
-        for (const pos of ship.positions) {
-          this.opponentGrid[pos] = '💥';
+      for (const pos of ship.positions) {
+        if (opponentData.hitsReceived.includes(pos)) {
+          const isDestroyed = ship.positions.every(p =>
+            opponentData.hitsReceived.includes(p)
+          );
+          this.opponentGrid[pos] = isDestroyed ? '💥' : '🔥';
         }
       }
     }
@@ -209,80 +211,61 @@ export class GameBoard implements OnInit, OnDestroy {
     }
   }
 
-  // HÀM FIRE ĐÃ ĐƯỢC CẬP NHẬT THEO LOGIC MỚI
-async fire(index: number): Promise<void> {
-  if (this.winner || !this.isMyTurn) return;
+  async fire(index: number): Promise<void> {
+    if (this.winner || !this.isMyTurn) return;
 
-  // Kiểm tra xem ô này đã bị bắn trước đó trên giao diện chưa để tránh gọi transaction không cần thiết
-  if (this.opponentGrid[index] === '💥' || this.opponentGrid[index] === '❌') {
-    alert('Vị trí này đã được đánh rồi!');
-    return;
-  }
+    if (['💥', '❌', '🔥'].includes(this.opponentGrid[index])) {
+      alert('Vị trí này đã được đánh rồi!');
+      return;
+    }
 
-  const roomRef = doc(this.firestore, 'rooms', this.roomId);
+    const roomRef = doc(this.firestore, 'rooms', this.roomId);
 
-  try {
-    await runTransaction(this.firestore, async (transaction) => {
-      const roomDoc = await transaction.get(roomRef);
-      if (!roomDoc.exists()) throw new Error('Phòng không tồn tại');
+    try {
+      await runTransaction(this.firestore, async (transaction) => {
+        const roomDoc = await transaction.get(roomRef);
+        if (!roomDoc.exists()) throw new Error('Phòng không tồn tại');
 
-      const data = roomDoc.data() as RoomData;
-      const opponentData = data.players[this.opponentId];
+        const data = roomDoc.data() as RoomData;
+        const opponentData = data.players[this.opponentId];
 
-      // Lấy dữ liệu hits và misses hiện tại từ transaction
-      const currentHits = opponentData.hitsReceived ?? [];
-      const currentMisses = opponentData.missesReceived ?? [];
+        const currentHits = opponentData.hitsReceived ?? [];
+        const currentMisses = opponentData.missesReceived ?? [];
 
-      // Kiểm tra lại trong transaction để đảm bảo dữ liệu nhất quán
-      if (currentHits.includes(index) || currentMisses.includes(index)) {
-        throw new Error('Vị trí này đã được đánh rồi!');
-      }
+        if (currentHits.includes(index) || currentMisses.includes(index)) {
+          throw new Error('Vị trí này đã được đánh rồi!');
+        }
 
-      // Tìm con tàu bị bắn trúng
-      const hitShip = this.opponentShips.find(ship =>
-        ship.positions.includes(index)
-      );
+        const hitShip = this.opponentShips.find(ship =>
+          ship.positions.includes(index)
+        );
 
-      let newHits = [...currentHits];
-      let newMisses = [...currentMisses];
+        let newHits = [...currentHits];
+        let newMisses = [...currentMisses];
 
-      if (hitShip) {
-        /**************************************************************
-         * THAY ĐỔI CỐT LÕI NẰM Ở ĐÂY
-         * Nếu bắn trúng, ta sẽ thêm TẤT CẢ các vị trí của con tàu đó
-         * vào danh sách hits.
-         * Sử dụng Set để đảm bảo các vị trí không bị trùng lặp.
-         **************************************************************/
-        console.log(`Bắn trúng tàu! Tàu ở vị trí: ${hitShip.positions.join(', ')}`);
-        const allHitPositions = new Set([...currentHits, ...hitShip.positions]);
-        newHits = Array.from(allHitPositions);
-      } else {
-        // Nếu bắn trượt, chỉ cần thêm vị trí vừa bắn vào misses.
-        newMisses.push(index);
-      }
+        if (hitShip) {
+          console.log(`🎯 Bắn trúng tàu tại ô ${index}`);
+          newHits.push(index);
+        } else {
+          console.log(`💨 Bắn trượt tại ô ${index}`);
+          newMisses.push(index);
+        }
 
-      // Chuyển lượt cho người chơi tiếp theo
-      const nextTurn =
-        data.currentTurn === data.players.player1.uid
-          ? data.players.player2.uid
-          : data.players.player1.uid;
+        const nextTurn =
+          data.currentTurn === data.players.player1.uid
+            ? data.players.player2.uid
+            : data.players.player1.uid;
 
-      // Cập nhật dữ liệu trong transaction
-      transaction.update(roomRef, {
-        currentTurn: nextTurn,
-        [`players.${this.opponentId}.hitsReceived`]: newHits,
-        [`players.${this.opponentId}.missesReceived`]: newMisses,
+        transaction.update(roomRef, {
+          currentTurn: nextTurn,
+          [`players.${this.opponentId}.hitsReceived`]: newHits,
+          [`players.${this.opponentId}.missesReceived`]: newMisses,
+        });
       });
-    });
-
-    // Không cần gọi lại loadRoomData() vì onSnapshot sẽ tự động làm việc đó
-    // setTimeout(() => this.loadRoomData(), 300); // Có thể bỏ dòng này
-
-  } catch (error: any) {
-    alert(error.message || 'Lỗi khi bắn!');
+    } catch (error: any) {
+      alert(error.message || 'Lỗi khi bắn!');
+    }
   }
-}
-
 
   async updateRoomStatus(status: 'waiting' | 'playing' | 'finished' | 'prepare') {
     const roomRef = doc(this.firestore, 'rooms', this.roomId);

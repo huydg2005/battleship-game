@@ -3,7 +3,7 @@
   <p class="result-message">{{ resultMessage }}</p>
 
   <div class="actions">
-    <button routerLink="/game">🔁 Chơi lại</button>
-    <button routerLink="/home">🏠 Về trang chính</button>
+    <button (click)="playAgain()">🔁 Chơi lại</button>
+    <button (click)="goToLobby()">🏠 Về trang chính</button>
   </div>
 </div>

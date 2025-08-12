@@ -2,6 +2,10 @@
   <h2>Xin chào, {{ playerName }} ({{ playerId }})</h2>
   <p>Mã phòng: {{ roomId }}</p>
 
+  <div class="note">
+    📌 <strong>Hướng dẫn:</strong> Kéo thả từng tàu vào lưới để bắt đầu trận đấu.
+  </div>
+
   <div class="ships-selection">
     <h3>Danh sách thuyền</h3>
     <div class="ships-list">
@@ -41,15 +45,15 @@
       Xoay thuyền (Hiện tại: {{ direction === 'horizontal' ? 'Ngang' : 'Dọc' }})
     </button>
 
-    <button (click)="confirmSetup()">
-      ✅ Sẵn sàng
-    </button>
-    <div class="status">
-  <p>Bạn là: {{ playerId }} - {{ playerName }}</p>
-  <p>Đã đặt: {{ placedShips.length }} thuyền</p>
-  <p>Đã sẵn sàng: {{ placedShips.length === shipTypes.length ? '✅' : '❌' }}</p>
-  <p>Đối thủ sẵn sàng: {{ opponentReady ? '✅' : '❌' }}</p>
-</div>
+    <button (click)="resetBoard()">🔄 Đặt lại</button>
 
+    <button (click)="confirmSetup()">✅ Sẵn sàng</button>
+
+    <div class="status">
+      <p>Bạn là: {{ playerId }} - {{ playerName }}</p>
+      <p>Đã đặt: {{ placedShips.length }} thuyền</p>
+      <p>Đã sẵn sàng: {{ placedShips.length === shipTypes.length ? '✅' : '❌' }}</p>
+      <p>Đối thủ sẵn sàng: {{ opponentReady ? '✅' : '❌' }}</p>
+    </div>
   </div>
 </div>

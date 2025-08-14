@@ -1,0 +1,28 @@
+<div class="game-container">
+  <h2>Phòng: {{ roomId }}</h2>
+
+  <div class="players">
+    <h3>Người chơi:</h3>
+    <ul>
+      <li *ngFor="let player of players">
+        {{ player }} <span *ngIf="player === currentTurn">🎯 Đang chơi</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="board">
+    <h3>Bàn cờ của bạn</h3>
+    <div class="grid">
+      <div
+        *ngFor="let cell of board; let i = index"
+        class="cell"
+        [class.hit]="cell === 'hit'"
+        [class.miss]="cell === 'miss'"
+        (click)="fire(i)"
+      >
+        {{ cell === 'hit' ? '🔥' : cell === 'miss' ? '❌' : '' }}
+      </div>
+    </div>
+  </div>
+  <button (click)="leaveRoom()">🏃 Rời phòng</button>
+</div>

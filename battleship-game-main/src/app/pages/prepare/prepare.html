@@ -1,0 +1,59 @@
+<div class="prepare-container">
+  <h2>Xin chào, {{ playerName }} ({{ playerId }})</h2>
+  <p>Mã phòng: {{ roomId }}</p>
+
+  <div class="ships-selection">
+    <h3>Danh sách thuyền</h3>
+    <div class="ships-list">
+      @for (type of shipTypes; track type) {
+        <div
+          class="ship"
+          draggable="true"
+          (dragstart)="startDrag(type)"
+          [class.placed]="isShipPlaced(type)"
+        >
+          {{ type }} ({{ shipSizes[type] }})
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="grid-section">
+    <h3>Bàn chơi</h3>
+    <div
+      class="grid"
+      style="display: grid; grid-template-columns: repeat(10, 30px); gap: 2px;"
+    >
+      @for (cell of grid; track $index) {
+        <div
+          class="cell"
+          (dragover)="allowDrop($event)"
+          (drop)="dropShip($index)"
+          [style.background]="cell ? '#4caf50' : '#e0e0e0'"
+        >
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="controls">
+    <button (click)="rotateDirection()">
+      🔄 Xoay thuyền (Hiện tại: {{ direction === 'horizontal' ? 'Ngang' : 'Dọc' }})
+    </button>
+
+    <button (click)="resetShips()">
+      🧹 Đặt lại tàu
+    </button>
+
+    <button (click)="confirmSetup()">
+      ✅ Sẵn sàng
+    </button>
+
+    <div class="status">
+      <p>Bạn là: {{ playerId }} - {{ playerName }}</p>
+      <p>Đã đặt: {{ placedShips.length }} thuyền</p>
+      <p>Đã sẵn sàng: {{ placedShips.length === shipTypes.length ? '✅' : '❌' }}</p>
+      <p>Đối thủ sẵn sàng: {{ opponentReady ? '✅' : '❌' }}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="container">
+  <!-- Sidebar bên trái -->
+  <aside class="sidebar">
+    <!-- Logo + Thông tin phòng -->
+    <div class="card">
+      <div class="logo-box">
+        <div class="logo">🚢</div>
+        <div class="title-block">
+          <h1 class="title">BATTLESHIP</h1>
+          <p class="subtitle">Giai đoạn: Chuẩn bị</p>
+        </div>
+        <div class="room-info">
+          <p class="label">Phòng</p>
+          <p class="room-code">{{ roomId }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hướng dẫn -->
+    <div class="card">
+      <h2>Thao tác</h2>
+      <hr class="card-divider" />
+      <ul>
+        <li>Kéo thả tàu vào lưới để đặt vị trí.</li>
+        <li>Nhấn phím <b>R</b> hoặc nút ↻ để xoay ngang/dọc.</li>
+        <li>Tàu chỉ được đặt khi hợp lệ.</li>
+      </ul>
+    </div>
+
+    <!-- Danh sách tàu -->
+    <div class="card">
+      <h2>Danh sách tàu</h2>
+      <div class="fleet">
+        <div
+          class="ship-piece"
+          *ngFor="let ship of shipsToPlace"
+          [ngClass]="{ placed: isShipPlaced(ship.type) }"
+          draggable="true"
+          (dragstart)="startDrag(ship.type)"
+          (dragend)="cancelDrag()"
+        >
+          <img
+            [src]="getShipImage(ship.type)"
+            [alt]="ship.type"
+            class="ship-icon"
+          />
+          <span class="ship-size">({{ ship.length }} ô)</span>
+          <span class="status">
+            {{ isShipPlaced(ship.type) ? '✅' : '—' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main bên phải -->
+  <main class="main">
+    <!-- Thanh công cụ -->
+    <div class="toolbar">
+      <button (click)="rotateDirection()">↻ Xoay</button>
+      <button (click)="placeRandomShips()">🎲 Đặt ngẫu nhiên</button>
+      <button (click)="resetGrid()">🧹 Xóa lưới</button>
+      <div class="direction">
+        Hướng hiện tại:
+        <span [ngClass]="direction">
+          {{ direction === 'horizontal' ? 'Ngang' : 'Dọc' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Lưới -->
+    <div class="card grid-wrapper">
+      <h2>Lưới của bạn</h2>
+      <div class="grid">
+        <div
+          *ngFor="let cell of grid; let i = index"
+          class="grid-cell"
+          [id]="'cell-' + i"
+          (dragover)="allowDrop($event, i)"
+          (drop)="dropShip(i)"
+          [ngClass]="{ preview: previewPositions.includes(i) }"
+        >
+          <!-- Nếu cell thuộc về tàu -->
+          <ng-container *ngIf="isCellOccupied(i) as placedShip">
+            <div
+              *ngIf="placedShip.positions[0] === i"
+              class="ship-image-container"
+              [style.width]="getShipStyle(placedShip).width"
+              [style.height]="getShipStyle(placedShip).height"
+            >
+              <img
+                [src]="getPlacedShipImage(placedShip)"
+                [alt]="placedShip.type"
+              />
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Tiến độ -->
+      <div class="progress">
+        Đã đặt:
+        <span>{{ placedShips.length }}/{{ shipsConfig.length }}</span> tàu
+      </div>
+    </div>
+
+    <!-- Nút hành động -->
+    <div class="actions">
+      <button
+        class="ready"
+        [disabled]="!allShipsPlaced() || isReady"
+        (click)="confirmSetup()"
+      >
+        ✅ {{ isReady ? 'Đã sẵn sàng' : 'Sẵn sàng' }}
+      </button>
+      <button class="fight" (click)="confirmSetup()" [disabled]="!isReady">
+        ⚔️ Chiến đấu
+      </button>
+    </div>
+  </main>
+</div>

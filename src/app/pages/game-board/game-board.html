@@ -1,0 +1,120 @@
+<div class="container">
+  <header class="glass header">
+    <div class="header-logo">
+      <div class="brand">🚢</div>
+      <div>
+        <h1 class="game-title">Battleship</h1>
+        <p class="game-subtitle">Trận chiến đang diễn ra</p>
+      </div>
+    </div>
+
+    <div class="header-players">
+      <div class="player-info">
+        <p class="player-label">Bạn</p>
+        <p class="player-name">{{ myName }}</p>
+      </div>
+      <div class="vs">vs</div>
+      <div class="player-info">
+        <p class="player-label">Đối thủ</p>
+        <p class="player-name">{{ opponentName }}</p>
+      </div>
+    </div>
+
+    <div class="turn-status">
+      Trạng thái lượt:
+      <span class="turn-indicator" [class.pulse-turn]="isMyTurn">
+        {{ isMyTurn ? 'Đến lượt bạn' : 'Đến lượt đối thủ' }}
+      </span>
+    </div>
+  </header>
+
+  <div *ngIf="winner" class="status">
+    <h3 *ngIf="winner === 'me'">🎉 Bạn đã thắng!</h3>
+    <h3 *ngIf="winner === 'opponent'">💥 Bạn đã thua!</h3>
+  </div>
+
+  <main class="game-board">
+    <!-- Lưới của tôi -->
+    <section class="glass grid-section">
+      <div class="grid-header">
+        <h2 class="my-grid-title">LƯỚI BÊN TA</h2>
+      </div>
+
+      <div class="grid-container">
+        <!-- Hiển thị các con tàu của tôi -->
+        <div *ngFor="let ship of myShips" class="ship-image-container" [ngStyle]="getShipStyles(ship)">
+          <img [src]="getShipImage(ship, isShipSunk(ship, false))" alt="ship" class="ship-img" />
+        </div>
+
+        <!-- Lớp phủ cho các ô bị bắn (khói/nước) -->
+        <div *ngFor="let cell of myGrid; let i = index" class="grid-cell-overlay">
+            <img *ngIf="myGrid[i] === 'assets/smoke.png'" [src]="myGrid[i]" alt="smoke" class="cell-img smoke" />
+            <img *ngIf="myGrid[i] === 'assets/miss.png'" [src]="myGrid[i]" alt="miss" class="cell-img" />
+        </div>
+      </div>
+      <div class="grid-subtitle">Tình trạng bên ta!</div>
+    </section>
+
+    <!-- Lưới đối thủ -->
+    <section class="glass grid-section">
+      <div class="grid-header">
+        <h2 class="op-grid-title">LƯỚI BÊN ĐỊCH</h2>
+      </div>
+
+      <div class="grid-container">
+        <!-- Hiển thị các con tàu đối thủ khi bị chìm -->
+        <ng-container *ngFor="let ship of opponentShips">
+          <div *ngIf="isShipSunk(ship, true)" class="ship-image-container" [ngStyle]="getShipStyles(ship)">
+            <img [src]="getShipImage(ship, true)" alt="sunk ship" class="ship-img" />
+          </div>
+        </ng-container>
+
+        <!-- Lớp phủ cho các ô bị bắn (khói/nước) -->
+        <div *ngFor="let cell of opponentGrid; let i = index"
+             class="grid-cell-overlay"
+             (click)="fire(i)"
+             [class.clickable]="isMyTurn && opponentGrid[i] === ''"
+             [class.aim-hover]="isMyTurn && opponentGrid[i] === ''">
+            <img *ngIf="opponentGrid[i] === 'assets/smoke.png'" [src]="opponentGrid[i]" alt="smoke" class="cell-img smoke" />
+            <img *ngIf="opponentGrid[i] === 'assets/miss.png'" [src]="opponentGrid[i]" alt="miss" class="cell-img" />
+        </div>
+      </div>
+      <div class="grid-subtitle">Hãy tấn công địch!</div>
+    </section>
+  </main>
+
+  <div class="glass control-panel">
+    <!-- Hàng trên: Gợi ý và nút Quay lại -->
+    <div class="top-row">
+      <div class="control-hint">
+        Gợi ý: Rê chuột trên lưới đối thủ để thấy “⌖” vàng, và nhấn để bắn khi đến lượt bạn.
+      </div>
+    </div>
+
+    <!-- Hàng dưới: Các mô tả kết quả -->
+    <div class="bottom-row">
+      <div class="grid-note">
+        <!-- Ngắm bắn -->
+        <div class="note-item">
+          <img src="assets/aim.png" alt="aim" class="note-icon" />
+          <p>Ngắm bắn!</p> 
+        </div>
+        <!-- Bắn trúng -->  
+        <div class="note-item">
+          <img src="assets/smoke.png" alt="hit" class="note-icon smoke game-board-smoke-hit" />
+          <p>Bắn trúng!</p>
+        </div>
+        <!-- Bắn hụt -->
+        <div class="note-item">
+          <img src="assets/miss.png" alt="miss" class="note-icon" />
+          <p>Bắn hụt!</p>
+        </div>
+        <!-- Đánh chìm -->
+        <div class="note-item">
+          <img src="assets/tau5_ngang_no.png" alt="sink" class="note-icon" />
+          <p>Đánh chìm!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

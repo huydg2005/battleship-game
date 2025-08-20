@@ -1,0 +1,62 @@
+<div class="game-container">
+  <h2>Trận chiến: {{ playerId }} vs {{ opponentId }}</h2>
+
+  @if (winner) {
+    <div class="status">
+      @switch (winner) {
+        @case ('player') {
+          <h3>🎉 Bạn đã thắng!</h3>
+        }
+        @case ('opponent') {
+          <h3>💥 Bạn đã thua!</h3>
+        }
+      }
+    </div>
+  }
+
+  <div class="grids">
+    <!-- Lưới của bạn -->
+    <div class="grid">
+      <h4>Lưới của bạn</h4>
+      <div class="cells">
+        @for (cell of myGrid; track $index; let i = $index) {
+          <div
+            [class.ship]="cell === '🚢'"
+            [class.hit]="cell === '💥'"
+            [class.miss]="cell === '❌'"
+          >
+            {{ cell }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Lưới đối thủ -->
+    <div class="grid">
+      <h4>Lưới đối thủ</h4>
+      <div class="cells">
+        @for (cell of opponentGrid; track $index; let i = $index) {
+          <div
+            (click)="isMyTurn && !winner && cell === '' ? fire(i) : null"
+            [class.clickable]="isMyTurn && cell === ''"
+            [class.hit]="cell === '💥'"
+            [class.miss]="cell === '❌'"
+            [class.unknown]="cell === ''"
+          >
+            {{ cell === '💥' ? '💥' : cell === '❌' ? '❌' : '?' }}
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="turn-indicator">
+    <p>Lượt hiện tại: <strong>{{ isMyTurn ? 'Bạn' : 'Đối thủ' }}</strong></p>
+  </div>
+
+  @if (roomStatus === 'prepare') {
+    <div class="actions">
+      <button (click)="markReady()">✅ Tôi đã sẵn sàng</button>
+    </div>
+  }
+</div>

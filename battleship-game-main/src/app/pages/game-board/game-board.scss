@@ -1,0 +1,30 @@
+.cells {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  gap: 4px;
+}
+.cells div {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border: 1px solid #ccc;
+  font-size: 18px;
+}
+.ship {
+  background-color: #aaa;
+}
+.hit {
+  background-color: red;
+  color: white;
+}
+.miss {
+  background-color: lightblue;
+}
+.unknown {
+  background-color: #f5f5f5;
+}
+.clickable {
+  cursor: pointer;
+  background-color: #eef;
+}

@@ -1,0 +1,73 @@
+<video id="background-video" autoplay muted loop playsinline class="background-video">
+  <source src="assets/video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<div class="video-overlay"></div>
+<!-- Thanh navbar -->
+<nav class="navbar">
+  <div class="navbar__logo">BATTLESHIP</div>
+  <div class="navbar__links">
+    <!-- Nút "Đăng nhập" đã được chỉnh sửa để sử dụng class btn-primary và gọi hàm loginWithGoogle -->
+    <a (click)="loginWithGoogle()" class="btn-primary" role="button">Đăng nhập</a>
+  </div>
+</nav>
+
+<!-- Khu vực chính -->
+<div class="login-container">
+  <!-- Thẻ đăng nhập -->
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="logo">
+      <img src="/assets/logo.jpg" alt="Battleship Logo">
+    </div>
+
+    <!-- Tiêu đề -->
+    <div class="title-section">
+      <h1><strong>BATTLESHIP GAME💣💣</strong></h1>
+      <p>SUY LUẬN & ĐÁNH LỪA TÂM LÝ ĐỐI PHƯƠNG <br> ĐỂ DÀNH CHIẾN THẮNG.</p>
+    </div>
+
+    <!-- Nút đăng nhập Google -->
+    <div class="social-login">
+      <button (click)="loginWithGoogle()" class="google-btn">
+        <i class="fab fa-google"></i> Đăng nhập bằng Google
+      </button>
+    </div>
+  </div>
+
+  <!-- Box Hướng dẫn cách chơi (Hiển thị cố định) -->
+  <div class="how-to-play-card">
+    <div class="logo">
+      <img src="/assets/bg.jpg" alt="Battleship Logo">
+    </div>
+    <h2><strong>HOW TO PLAY 🎮️</strong></h2>
+    <div class="instructions-grid">
+      <div class="instruction-box">
+        <span class="icon">🎯</span>
+        <h3>Mục tiêu</h3>
+        <p>Hãy là người đầu tiên đánh chìm tất cả các con tàu của đối thủ.</p>
+      </div>
+      <div class="instruction-box">
+        <span class="icon">⚓</span>
+        <h3>Bố trí tàu</h3>
+        <p>Mỗi người chơi sẽ bố trí các con tàu của mình trên một lưới ô vuông. Bạn không được nhìn thấy vị trí tàu của đối thủ.</p>
+      </div>
+      <div class="instruction-box">
+        <span class="icon">💥</span>
+        <h3>Tấn công</h3>
+        <p>Đến lượt, bạn sẽ chọn một ô trên lưới của đối thủ để bắn.</p>
+      </div>
+      <div class="instruction-box">
+        <span class="icon">📊</span>
+        <h3>Kết quả</h3>
+        <p>Nếu bạn bắn trúng tàu, sẽ đánh dấu ô đã trúng và bạn được bắn tiếp.<br>Nếu bạn bắn trượt, sẽ đánh dấu "X" và đến lượt đối thủ.</p>
+      </div>
+      <div class="instruction-box">
+        <span class="icon">🏆</span>
+        <h3>Chiến thắng</h3>
+        <p>Khi bạn bắn trúng tất cả các ô của một con tàu, nó sẽ bị chìm. Người đầu tiên đánh chìm toàn bộ tàu của đối thủ sẽ chiến thắng!</p>
+      </div>
+    </div>
+  </div>
+</div>

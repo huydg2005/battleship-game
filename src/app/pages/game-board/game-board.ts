@@ -37,6 +37,7 @@ type RoomData = {
 })
 export class GameBoard implements OnInit, OnDestroy {
     gridSize = 100;
+    // myGrid và opponentGrid sẽ chỉ chứa các vị trí bị bắn trúng/hụt.
     myGrid: string[] = Array(this.gridSize).fill('');
     opponentGrid: string[] = Array(this.gridSize).fill('');
     winner: 'me' | 'opponent' | null = null;
@@ -54,11 +55,13 @@ export class GameBoard implements OnInit, OnDestroy {
 
     private myData: PlayerData | null = null;
     private opponentData: PlayerData | null = null;
+    private cellSize = 42;
+    private gridGap = 5;
 
     private firestore = inject(Firestore);
     private route = inject(ActivatedRoute);
     public router = inject(Router);
-    private ngZone = inject(NgZone);
+    // private ngZone = inject(NgZone);
 
     private unsubscribeRoom?: () => void;
 
@@ -125,35 +128,37 @@ export class GameBoard implements OnInit, OnDestroy {
     }
 
     renderGrids(): void {
-    if (!this.myData || !this.opponentData) return;
+        if (!this.myData || !this.opponentData) return;
 
-    this.myGrid = Array(this.gridSize).fill('');
-    this.opponentGrid = Array(this.gridSize).fill('');
+        this.myGrid = Array(this.gridSize).fill('');
+        this.opponentGrid = Array(this.gridSize).fill('');
 
-    // 👉 Hiển thị khói cho tàu của mình nếu chưa bị chìm
-    for (const pos of this.myData.hitsReceived) {
-        const hitShip = this.myShips.find(ship => ship.positions.includes(pos));
-        const isSunk = hitShip ? this.isShipSunk(hitShip, false) : false;
-
-        if (!isSunk) {
+        // Cập nhật grid của mình (Hiển thị khói và miss)
+        for (const pos of this.myData.hitsReceived) {
             this.myGrid[pos] = 'assets/smoke.png';
         }
-    }
+        for (const pos of this.myData.missesReceived) {
+            this.myGrid[pos] = 'assets/miss.png';
+        }
 
-    // 👉 Hiển thị khói cho tàu đối thủ nếu chưa bị chìm
-    for (const pos of this.opponentData.hitsReceived) {
-        const hitShip = this.opponentShips.find(ship => ship.positions.includes(pos));
-        const isSunk = hitShip ? this.isShipSunk(hitShip, true) : false;
-
-        if (!isSunk) {
+        // Cập nhật grid của đối thủ (Hiển thị khói và miss)
+        for (const pos of this.opponentData.hitsReceived) {
             this.opponentGrid[pos] = 'assets/smoke.png';
+        }
+        for (const pos of this.opponentData.missesReceived) {
+            this.opponentGrid[pos] = 'assets/miss.png';
         }
     }
 
-    // 💥 Misses vẫn hiển thị như bình thường
-    for (const pos of this.myData.missesReceived) this.myGrid[pos] = 'assets/miss.png';
-    for (const pos of this.opponentData.missesReceived) this.opponentGrid[pos] = 'assets/miss.png';
-}
+    isCellHit(index: number, isOpponentGrid: boolean): boolean {
+        const hits = isOpponentGrid ? this.opponentData?.hitsReceived : this.myData?.hitsReceived;
+        return hits ? hits.includes(index) : false;
+    }
+
+    isCellMiss(index: number, isOpponentGrid: boolean): boolean {
+        const misses = isOpponentGrid ? this.opponentData?.missesReceived : this.myData?.missesReceived;
+        return misses ? misses.includes(index) : false;
+    }
 
     getShipStyle(ship: Ship) {
         const cellSize = 42;
@@ -163,13 +168,12 @@ export class GameBoard implements OnInit, OnDestroy {
     }
 
     getShipPosition(ship: Ship) {
-        const cellSize = 42;
         const headIndex = Math.min(...ship.positions);
         const row = Math.floor(headIndex / 10);
         const col = headIndex % 10;
         return {
-            top: `${row * cellSize}px`,
-            left: `${col * cellSize}px`
+            top: `${row * (this.cellSize + this.gridGap)}px`,
+            left: `${col * (this.cellSize + this.gridGap)}px`
         };
     }
 
@@ -189,53 +193,53 @@ export class GameBoard implements OnInit, OnDestroy {
         }
         return imagePath;
     }
-     
+      
     getShipStyles(ship: Ship): { [key: string]: string } {
-  return {
-    ...this.getShipStyle(ship),
-    ...this.getShipPosition(ship)
-  };
-}
+      return {
+        ...this.getShipStyle(ship),
+        ...this.getShipPosition(ship)
+      };
+    }
 
     checkWinner(): void {
-    if (!this.myData || !this.opponentData) return;
+        if (!this.myData || !this.opponentData) return;
 
-    // Đếm số tàu đã bị đánh chìm
-    const opponentShipsSunk = this.opponentShips.filter(ship =>
-        this.isShipSunk(ship, true)
-    ).length;
+        // Đếm số tàu đã bị đánh chìm
+        const opponentShipsSunk = this.opponentShips.filter(ship =>
+            this.isShipSunk(ship, true)
+        ).length;
 
-    const myShipsSunk = this.myShips.filter(ship =>
-        this.isShipSunk(ship, false)
-    ).length;
+        const myShipsSunk = this.myShips.filter(ship =>
+            this.isShipSunk(ship, false)
+        ).length;
 
-    // ✅ Nếu mình phá hủy đủ 4 tàu trước
-    if (opponentShipsSunk >= 4 && myShipsSunk < 4 && !this.winner) {
-        this.winner = 'me';
-        this.updateRoomStatus('finished');
-        this.router.navigate(['/result'], {
-            queryParams: { winner: this.uid, myUid: this.uid },
-        });
+        // ✅ Nếu mình phá hủy đủ 4 tàu trước
+        if (opponentShipsSunk >= 4 && myShipsSunk < 4 && !this.winner) {
+            this.winner = 'me';
+            this.updateRoomStatus('finished');
+            this.router.navigate(['/result'], {
+                queryParams: { winner: this.uid, myUid: this.uid },
+            });
+        }
+
+        // ✅ Nếu đối thủ phá hủy đủ 4 tàu trước
+        else if (myShipsSunk >= 4 && opponentShipsSunk < 4 && !this.winner) {
+            this.winner = 'opponent';
+            this.updateRoomStatus('finished');
+            this.router.navigate(['/result'], {
+                queryParams: { winner: this.opponentUid, myUid: this.uid },
+            });
+        }
+
+        // 🛑 Nếu cả hai cùng đạt 4 tàu (hiếm) → xử lý tùy ý
+        else if (myShipsSunk >= 4 && opponentShipsSunk >= 4 && !this.winner) {
+            this.winner = 'opponent'; // hoặc 'me' hoặc random
+            this.updateRoomStatus('finished');
+            this.router.navigate(['/result'], {
+                queryParams: { winner: this.opponentUid, myUid: this.uid },
+            });
+        }
     }
-
-    // ✅ Nếu đối thủ phá hủy đủ 4 tàu trước
-    else if (myShipsSunk >= 4 && opponentShipsSunk < 4 && !this.winner) {
-        this.winner = 'opponent';
-        this.updateRoomStatus('finished');
-        this.router.navigate(['/result'], {
-            queryParams: { winner: this.opponentUid, myUid: this.uid },
-        });
-    }
-
-    // 🛑 Nếu cả hai cùng đạt 4 tàu (hiếm) → xử lý tùy ý
-    else if (myShipsSunk >= 4 && opponentShipsSunk >= 4 && !this.winner) {
-        this.winner = 'opponent'; // hoặc 'me' hoặc random
-        this.updateRoomStatus('finished');
-        this.router.navigate(['/result'], {
-            queryParams: { winner: this.opponentUid, myUid: this.uid },
-        });
-    }
-}
 
 
     async fire(index: number): Promise<void> {

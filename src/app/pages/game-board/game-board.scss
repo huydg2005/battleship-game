@@ -1,4 +1,5 @@
 $grid-cell-size: 42px;
+$grid-gap: 5px;
 $primary-color: #f59e0b;
 $primary-color-dark: #d97706;
 $ready-color: #22c55e;
@@ -66,7 +67,7 @@ body {
 }
 
 .game-subtitle {
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   color: $muted-text-color;
 }
 
@@ -103,6 +104,8 @@ body {
   display: grid;
   grid-template-columns: repeat(10, $grid-cell-size);
   grid-template-rows: repeat(10, $grid-cell-size);
+  gap: $grid-gap;
+  object-fit: contain;
   background-image: url('/assets/beach.jpg');
   background-size: cover;
   background-position: center;
@@ -111,7 +114,7 @@ body {
   overflow: hidden;
 }
 
-.grid-cell {
+.grid-cell-overlay {
   width: $grid-cell-size;
   height: $grid-cell-size;
   border: 1px solid rgba(71, 85, 105, 0.6);
@@ -123,11 +126,11 @@ body {
   z-index: 10;
 }
 
-.grid-cell.clickable {
+.grid-cell-overlay.clickable {
   cursor: pointer;
 }
 
-.grid-cell.clickable:hover {
+.grid-cell-overlay.clickable:hover {
   background-color: rgba(30, 41, 59, 0.8);
   transform: translateY(-1px);
 }
@@ -137,68 +140,103 @@ body {
   height: 100%;
   object-fit: contain;
   pointer-events: none;
-  z-index: 15;
 }
 
 .ship-image-container {
   position: absolute;
-  z-index: 20;
-  pointer-events: none;
+  z-index: 1; 
+  display: grid;
+  place-items: center;
 }
 
 .ship-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; // hoặc contain nếu muốn giữ tỉ lệ
+  object-fit: contain;
   pointer-events: none;
 }
 
-
-.grid-legend {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  color: #d1d5db;
+.smoke {
+  width: 100%;
+  height: 77%;
+  object-fit: contain; 
+  z-index: 15; 
+  transform: translateY(-10px);
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.game-board-smoke-hit {
+  transform: translateY(-5px);
+}
+.grid-header {
+  text-align: center;
 }
 
-.legend-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
+.my-grid-title {
+  color: #0b3ab0; 
+  font-size: 1.5rem;
+  font-weight: bold;
 }
-
+.op-grid-title {
+  color: #f22727; 
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.grid-subtitle{
+  text-align: center;
+  gap: 1rem;
+  padding-top: 5px;
+}
 .control-panel {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1rem;
 }
 
-.button {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  font-weight: 600;
-  border: 1px solid #475569;
-  background: transparent;
-  color: $text-color;
-  transition: all 0.2s ease-in-out;
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
-.button-ready:hover {
-  border-color: $ready-color;
-  color: $ready-color;
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.control-hint {
+  font-size: 0.875rem;
+  color: $muted-text-color;
+  text-align: center;
+}
+
+.grid-note {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.note-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $muted-text-color;
+  }
+}
+
+.note-icon {
+  width: 1rem;
+  height: auto;
 }
 
 .pulse-turn {

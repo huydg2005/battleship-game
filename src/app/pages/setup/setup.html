@@ -1,87 +1,74 @@
 <div class="setup-container">
-  <!-- Header -->
-  <header class="header">
-    <div class="logo">
-      <div class="logo-icon">🎮</div>
-      <h1>SẢNH CHỜ</h1>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🎮</div>
+            <h1>SẢNH CHỜ</h1>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">{{ userInitial }}</div>
+            <span>{{ userName }}</span>
+            <button class="logout-btn" (click)="logout()">Đăng xuất</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Cột trái: Tạo phòng -->
+        <section class="create-room card">
+            <div class="icon-circle">➕</div>
+            <h2>TẠO PHÒNG MỚI</h2>
+
+            <label>Tên phòng:</label>
+            <input [(ngModel)]="roomName" placeholder="Nhập tên phòng..." />
+
+            <label>Số người chơi tối đa:</label>
+            <select [(ngModel)]="maxPlayers">
+                <option [value]="1">1 người</option>
+                <option [value]="2">2 người</option>
+            </select>
+
+            <label>Mật khẩu (Tùy chọn):</label>
+            <input type="password" [(ngModel)]="roomPassword" placeholder="Để trống nếu phòng công khai" />
+
+            <button class="primary-btn" (click)="createRoom()">🚀 Tạo Phòng</button>
+        </section>
+
+        <!-- Cột phải: Tham gia phòng -->
+        <section class="join-room card">
+            <h2>TÌM PHÒNG</h2>
+
+            <input [(ngModel)]="roomCode"
+                   placeholder="Nhập mã phòng..."
+                   (keyup.enter)="joinRoom()" />
+
+            <button class="primary-btn" (click)="joinRoom()">🔑 Vào Phòng</button>
+        </section>
+    </main>
+    
+    <!-- Các chấm radar mô phỏng phát hiện địch -->
+    <div class="radar-dot dot-1"></div>
+    <div class="radar-dot dot-2"></div>
+    <div class="radar-dot dot-3"></div>
+    <div class="radar-dot dot-4"></div>
+    <div class="radar-dot dot-5"></div>
+    
+    <!-- Sonar Pulse -->
+    <div class="sonar-pulse"></div>
+
+    <!-- Modal nhập mật khẩu -->
+    <div class="modal" [class.show]="showPasswordModal">
+        <div class="modal-content">
+            <h3>Nhập Mật Khẩu Phòng</h3>
+            <input type="password" [(ngModel)]="joinPassword" placeholder="Mật khẩu phòng..." />
+            <div class="modal-actions">
+                <button (click)="closePasswordModal()">Hủy</button>
+                <button class="primary-btn" (click)="confirmJoinRoom()">Tham Gia</button>
+            </div>
+        </div>
     </div>
-    <div class="user-info">
-      <div class="user-avatar">{{ userInitial }}</div>
-      <span>{{ userName }}</span>
-      <button class="logout-btn" (click)="logout()">Đăng xuất</button>
+
+    <!-- Thông báo -->
+    <div class="notification" [class.show]="showNotification">
+        {{ notificationText }}
     </div>
-  </header>
-
-  <main class="main-content">
-    <!-- Cột trái: Tạo phòng -->
-    <section class="create-room card">
-      <div class="icon-circle">➕</div>
-      <h2>TẠO PHÒNG MỚI</h2>
-
-      <label>Tên phòng:</label>
-      <input [(ngModel)]="roomName" placeholder="Nhập tên phòng..." />
-
-      <label>Số người chơi tối đa:</label>
-      <select [(ngModel)]="maxPlayers">
-        <option [value]="1">1 người</option>
-        <option [value]="2">2 người</option>
-      </select>
-
-      <label>Mật khẩu (Tùy chọn):</label>
-      <input type="password" [(ngModel)]="roomPassword" placeholder="Để trống nếu phòng công khai" />
-
-      <button class="primary-btn" (click)="createRoom()">🚀 Tạo Phòng</button>
-    </section>
-
-    <!-- Cột phải: Tham gia phòng -->
-    <section class="join-room card">
-      <h2>TÌM PHÒNG</h2>
-
-      <input [(ngModel)]="roomCode"
-            placeholder="Nhập mã phòng..."
-            (keyup.enter)="joinRoom()" />
-
-      <button class="primary-btn" (click)="joinRoom()">🔑 Vào Phòng</button>
-    </section>
-  </main>
-  
-  <!-- Khói -->
-  <div class="smoke-container">
-    <div class="smoke"></div>
-    <div class="smoke"></div>
-    <div class="smoke"></div>
-    <div class="smoke"></div>
-    <div class="smoke"></div>
-  </div>
-
-  <!-- Lửa -->
-  <div class="fire-container">
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-  </div>
-
-  <!-- Modal nhập mật khẩu -->
-  <div class="modal" [class.show]="showPasswordModal">
-    <div class="modal-content">
-      <h3>Nhập Mật Khẩu Phòng</h3>
-      <input type="password" [(ngModel)]="joinPassword" placeholder="Mật khẩu phòng..." />
-      <div class="modal-actions">
-        <button (click)="closePasswordModal()">Hủy</button>
-        <button class="primary-btn" (click)="confirmJoinRoom()">Tham Gia</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Thông báo -->
-  <div class="notification" [class.show]="showNotification">
-    {{ notificationText }}
-  </div>
 </div>

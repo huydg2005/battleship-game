@@ -1,353 +1,409 @@
-html, body {
-  height: 100%;
+/* --- Reset and General Styles --- */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* 🎮 Setup Container - Battleship Lobby */
 .setup-container {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  color: #8beaff; /* Light aqua color */
+  background-color: #000a12; /* Deep sea blue-black background */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  color: #333;  
-
-  .header {
-    background-color: #0d1e3a;
-    height: 60px;
-    backdrop-filter: blur(6px);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 40px; 
-    align-items: center; 
-    color: #fff;
+  align-items: center;
+  justify-content: flex-start;
   
+  /* Static sonar grid effect */
+  background-image:
+    linear-gradient(rgba(139, 234, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 234, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      .logo-icon {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 8px;
-        border-radius: 8px;
-      }
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      .user-avatar {
-        background: linear-gradient(to right, #4facfe, #00f2fe);
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 32px;
-        color: white;
-        font-weight: bold;
-      }
-      .logout-btn {
-        background: #f56565;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-      }
-    }
+  /* Horizontal sonar scan effect - Hiệu ứng quét ngang */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(139, 234, 255, 0) 0%, rgba(139, 234, 255, 0.1) 50%, rgba(139, 234, 255, 0) 100%);
+    animation: gridScan 8s linear infinite;
+    z-index: 0;
   }
 
-  .main-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .card {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  }
-
-  .create-room {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    
-    .icon-circle {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(to right, #48bb78, #4299e1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      margin: auto;
-    }
-
-    input, select {
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-
-    .primary-btn {
-      background: linear-gradient(to right, #48bb78, #4299e1);
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  }
-
-    .join-room {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    input {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-
-    .primary-btn {
-      background: linear-gradient(to right, #4299e1, #667eea);
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  }
-  
-  h2{
-    text-align: center;
-  }
-  .search-box {
-    margin: 1rem 0;
-    input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-  }
-
-  .rooms {
-    max-height: 350px;
-    overflow-y: auto;
-    .room-item {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: background 0.3s;
-
-      &:hover {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-      }
-    }
-  }
-
-  .room-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-
-    &.public {
-      background: linear-gradient(to right, #9f7aea, #ed64a6);
-    }
-    &.locked {
-      background: linear-gradient(to right, #f6ad55, #f56565);
-    }
-  }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    background: #48bb78;
+  /* Full screen sonar pulse effect - Hiệu ứng xung động lan tỏa */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
-    display: inline-block;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-  }
-
-  .modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
-
-    &.show {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 100%;
-    }
-  }
-
-  .notification {
-    position: fixed;
-    top: 20px;
-    right: -300px;
-    background: #48bb78;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: right 0.3s;
-
-    &.show {
-      right: 20px;
-    }
+    background: transparent;
+    border: 1px solid rgba(139, 234, 255, 0.5);
+    transform: translate(-50%, -50%) scale(0);
+    animation: sonarPing 3s ease-out infinite;
+    z-index: 0;
   }
 }
 
-/* ================= KHÓI FULL SCREEN ================= */
-.smoke-container {
-  position: fixed;
-  bottom: 0;
+/* 🌟 Radar Dots Styles - Các chấm radar */
+.radar-dots {
+  position: absolute;
+  top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
+  z-index: 1; /* Đảm bảo các chấm nằm trên nền nhưng dưới nội dung chính */
+  pointer-events: none; /* Không cho tương tác với chuột */
 }
 
-.smoke {
+.radar-dot {
   position: absolute;
-  bottom: 0;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(80,80,80,0.5) 0%, rgba(40,40,40,0) 70%);
+  width: 10px; /* Kích thước của chấm */
+  height: 10px; /* Kích thước của chấm */
+  background-color: #ff0000; /* Màu đỏ cho chấm */
   border-radius: 50%;
-  animation: smokeRise 2.5s infinite ease-in-out;
-  filter: blur(40px);
+  opacity: 0; /* Ban đầu ẩn */
+  box-shadow: 0 0 8px 4px #ff0000; /* Hiệu ứng lấp lánh */
+  animation: dotSequence 7s linear infinite, starTwinkle 1.5s ease-in-out infinite alternate;
 }
 
-.smoke:nth-child(1) {
-  left: 10%;
-  animation-delay: 0s;
+.dot-1 {
+  top: 75%;
+  left: 65%;
+  animation-delay: 0.5s;
 }
-.smoke:nth-child(2) {
-  left: 30%;
+
+.dot-2 {
+  top: 70%;
+  left: 15%;
+  animation-delay: 1.2s;
+}
+
+.dot-3 {
+  top: 50%;
+  left: 85%;
+  animation-delay: 2.1s;
+}
+
+.dot-4 {
+  top: 15%;
+  left: 80%;
+  animation-delay: 2.5s;
+}
+
+.dot-5 {
+  top: 10%;
+  left: 10%;
   animation-delay: 3s;
 }
-.smoke:nth-child(3) {
-  left: 50%;
-  animation-delay: 6s;
-}
-.smoke:nth-child(4) {
-  left: 70%;
-  animation-delay: 1.5s;
-}
-.smoke:nth-child(5) {
-  left: 90%;
-  animation-delay: 4.5s;
+
+/* 🌟 Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(0,255,255,0.3);
+  position: relative;
+  z-index: 2; /* Đảm bảo header nằm trên nền và các chấm */
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Increase space between "Sảnh chờ" and the letter K */
+
+    .logo-icon {
+      font-size: 2rem;
+      animation: pulseGlow 2s infinite alternate;
+      text-shadow: 0 0 12px cyan;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: cyan;
+      text-shadow: 0 0 15px cyan, 0 0 25px #0ff;
+      animation: neonFlicker 3s infinite;
+    }
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Increase space between player name and logout button */
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      margin-left: 4rem;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #0ff, #09f);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #001;
+      box-shadow: 0 0 15px #0ff, inset 0 0 10px rgba(255,255,255,0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+      cursor: pointer;
+
+      &:hover {
+        transform: rotateY(360deg);
+      }
+    }
+
+    span {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 0 8px #0ff;
+      animation: fadeSlideIn 1s ease forwards;
+    }
+
+    .logout-btn {
+      background: linear-gradient(90deg, #ff4d4d, #ff0000);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
 }
 
-@keyframes smokeRise {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0.6;
+/* 🌟 Main Content */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 3rem;
+  justify-items: center;
+  position: relative;
+  z-index: 2; /* Đảm bảo nội dung chính nằm trên nền và các chấm */
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+    border-radius: 20px;
+    background: rgba(0, 20, 30, 0.65);
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(0,255,255,0.3);
+    box-shadow: 0 0 25px rgba(0,255,255,0.4);
+    transform: perspective(1000px) rotateX(10deg);
+    transition: all 0.6s ease;
+
+    &:hover {
+      transform: perspective(1000px) rotateX(0) scale(1.05);
+      box-shadow: 0 0 35px rgba(0,255,255,0.7), inset 0 0 20px rgba(0,255,255,0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.2rem;
+      font-size: 1.6rem;
+      color: cyan;
+      text-shadow: 0 0 12px cyan;
+      animation: neonFlicker 3s infinite;
+    }
+
+    .icon-circle {
+      font-size: 2.5rem;
+      margin: 0 auto 1rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, cyan, #004);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px cyan;
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+
+    label {
+      display: block;
+      margin: 0.6rem 0 0.3rem;
+      font-weight: bold;
+      color: #0ff;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid #0ff;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      margin-bottom: 1rem;
+      transition: 0.3s;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 15px #0ff;
+      }
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #0ff, #09f, #0ff);
+      border: none;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #001;
+      cursor: pointer;
+      background-size: 200%;
+      transition: 0.4s;
+      animation: glowPulse 2s infinite;
+
+      &:hover {
+        background-position: right;
+        transform: scale(1.08);
+        box-shadow: 0 0 20px #0ff;
+      }
+    }
   }
-  50% {
-    transform: translateY(-300px) scale(1.5);
-    opacity: 0.4;
+}
+
+/* 🌟 Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+
+  &.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: rgba(0,20,30,0.85);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 2px solid cyan;
+    box-shadow: 0 0 20px cyan;
+    animation: fadeZoomIn 0.6s ease;
+
+    h3 {
+      margin-bottom: 1rem;
+      color: #0ff;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+  }
+}
+
+/* 🌟 Notification */
+.notification {
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,255,255,0.2);
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  border: 1px solid cyan;
+  backdrop-filter: blur(8px);
+  transition: 0.5s;
+  font-weight: bold;
+
+  &.show {
+    bottom: 30px;
+    box-shadow: 0 0 15px cyan;
+  }
+}
+
+/* 🌟 Keyframes */
+@keyframes gridScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes sonarPing {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
   }
   100% {
-    transform: translateY(-600px) scale(2);
+    transform: translate(-50%, -50%) scale(50);
     opacity: 0;
   }
 }
 
-/* ================= LỬA ================= */
-.fire-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  pointer-events: none;
-  z-index: 2;
+@keyframes dotSequence {
+  0% { opacity: 0; }
+  10% { opacity: 0.5; }
+  85% { opacity: 0.5; }
+  90% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
-.flame {
-  position: relative;
-  width: 30px;
-  height: 80px;
-  background: radial-gradient(circle at 50% 80%, yellow 0%, orange 50%, red 80%, transparent 100%);
-  border-radius: 50% 50% 20% 20%;
-  animation: flameMove 1s infinite ease-in-out;
-  transform-origin: bottom center;
+@keyframes starTwinkle {
+  0%, 100% {
+    box-shadow: 0 0 4px 2px #ff0000;
+  }
+  50% {
+    box-shadow: 0 0 12px 6px #ff0000;
+  }
 }
 
-.flame::before, .flame::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50% 50% 20% 20%;
+@keyframes pulseGlow {
+  from { text-shadow: 0 0 8px cyan; }
+  to { text-shadow: 0 0 20px #0ff; }
 }
 
-.flame::before {
-  background: radial-gradient(circle at 50% 80%, white 0%, yellow 40%, transparent 80%);
-  animation: innerFlame 1s infinite ease-in-out;
+@keyframes neonFlicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.2; }
 }
 
-.flame::after {
-  background: radial-gradient(circle at 50% 80%, rgba(255,200,0,0.6) 0%, rgba(255,140,0,0.4) 50%, transparent 80%);
-  animation: outerGlow 1.5s infinite ease-in-out;
+@keyframes fadeZoomIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes flameMove {
-  0%, 100% { transform: scaleY(1) scaleX(1); }
-  50% { transform: scaleY(1.3) scaleX(0.9); }
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
 }
 
-@keyframes innerFlame {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.8); opacity: 0.8; }
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px cyan; }
+  50% { box-shadow: 0 0 25px #0ff; }
 }
 
-@keyframes outerGlow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 0.9; }
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
 }
-
-

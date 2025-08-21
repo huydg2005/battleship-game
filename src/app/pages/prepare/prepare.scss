@@ -162,7 +162,7 @@ h1, p{
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(10, 32px);
+  grid-template-columns: repeat(15, 32px);
   grid-template-rows: repeat(10, 32px);
   gap: 4px;
   background-image: url('/assets/beach.jpg');

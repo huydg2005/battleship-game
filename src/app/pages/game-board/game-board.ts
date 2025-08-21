@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Firestore, doc, onSnapshot, runTransaction, updateDoc } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
@@ -36,8 +36,7 @@ type RoomData = {
     imports: [CommonModule],
 })
 export class GameBoard implements OnInit, OnDestroy {
-    gridSize = 100;
-    // myGrid và opponentGrid sẽ chỉ chứa các vị trí bị bắn trúng/hụt.
+    gridSize = 150; // Đã cập nhật kích thước lưới
     myGrid: string[] = Array(this.gridSize).fill('');
     opponentGrid: string[] = Array(this.gridSize).fill('');
     winner: 'me' | 'opponent' | null = null;
@@ -57,11 +56,11 @@ export class GameBoard implements OnInit, OnDestroy {
     private opponentData: PlayerData | null = null;
     private cellSize = 42;
     private gridGap = 5;
+    private gridCols = 15; // Đã thêm biến cho số cột
 
     private firestore = inject(Firestore);
     private route = inject(ActivatedRoute);
     public router = inject(Router);
-    // private ngZone = inject(NgZone);
 
     private unsubscribeRoom?: () => void;
 
@@ -105,7 +104,7 @@ export class GameBoard implements OnInit, OnDestroy {
             this.opponentData.hitsReceived ??= [];
             this.opponentData.missesReceived ??= [];
 
-            // ✅ Chuẩn hóa vị trí tàu
+            // Chuẩn hóa vị trí tàu
             this.myShips = (this.myData.ships ?? []).map(ship => ({
                 ...ship,
                 positions: [...ship.positions].sort((a, b) => a - b)
@@ -135,18 +134,26 @@ export class GameBoard implements OnInit, OnDestroy {
 
         // Cập nhật grid của mình (Hiển thị khói và miss)
         for (const pos of this.myData.hitsReceived) {
-            this.myGrid[pos] = 'assets/smoke.png';
+            if (pos < this.gridSize) {
+                this.myGrid[pos] = 'assets/smoke.png';
+            }
         }
         for (const pos of this.myData.missesReceived) {
-            this.myGrid[pos] = 'assets/miss.png';
+            if (pos < this.gridSize) {
+                this.myGrid[pos] = 'assets/miss.png';
+            }
         }
 
         // Cập nhật grid của đối thủ (Hiển thị khói và miss)
         for (const pos of this.opponentData.hitsReceived) {
-            this.opponentGrid[pos] = 'assets/smoke.png';
+            if (pos < this.gridSize) {
+                this.opponentGrid[pos] = 'assets/smoke.png';
+            }
         }
         for (const pos of this.opponentData.missesReceived) {
-            this.opponentGrid[pos] = 'assets/miss.png';
+            if (pos < this.gridSize) {
+                this.opponentGrid[pos] = 'assets/miss.png';
+            }
         }
     }
 
@@ -176,9 +183,8 @@ export class GameBoard implements OnInit, OnDestroy {
 
     getShipPosition(ship: Ship) {
         const headIndex = Math.min(...ship.positions);
-        const row = Math.floor(headIndex / 10);
-        const col = headIndex % 10;
-        // Logic mới để tính toán vị trí, chỉ sử dụng kích thước ô và khoảng cách lưới
+        const row = Math.floor(headIndex / this.gridCols); // Đã sửa lỗi: sử dụng gridCols
+        const col = headIndex % this.gridCols; // Đã sửa lỗi: sử dụng gridCols
         const top = row * (this.cellSize + this.gridGap);
         const left = col * (this.cellSize + this.gridGap);
         return {
@@ -214,7 +220,6 @@ export class GameBoard implements OnInit, OnDestroy {
     checkWinner(): void {
         if (!this.myData || !this.opponentData) return;
 
-        // Đếm số tàu đã bị đánh chìm
         const opponentShipsSunk = this.opponentShips.filter(ship =>
             this.isShipSunk(ship, true)
         ).length;
@@ -223,7 +228,6 @@ export class GameBoard implements OnInit, OnDestroy {
             this.isShipSunk(ship, false)
         ).length;
 
-        // ✅ Nếu mình phá hủy đủ 4 tàu trước
         if (opponentShipsSunk >= 4 && myShipsSunk < 4 && !this.winner) {
             this.winner = 'me';
             this.updateRoomStatus('finished');
@@ -231,8 +235,6 @@ export class GameBoard implements OnInit, OnDestroy {
                 queryParams: { winner: this.uid, myUid: this.uid },
             });
         }
-
-        // ✅ Nếu đối thủ phá hủy đủ 4 tàu trước
         else if (myShipsSunk >= 4 && opponentShipsSunk < 4 && !this.winner) {
             this.winner = 'opponent';
             this.updateRoomStatus('finished');
@@ -240,10 +242,8 @@ export class GameBoard implements OnInit, OnDestroy {
                 queryParams: { winner: this.opponentUid, myUid: this.uid },
             });
         }
-
-        // 🛑 Nếu cả hai cùng đạt 4 tàu (hiếm) → xử lý tùy ý
         else if (myShipsSunk >= 4 && opponentShipsSunk >= 4 && !this.winner) {
-            this.winner = 'opponent'; // hoặc 'me' hoặc random
+            this.winner = 'opponent';
             this.updateRoomStatus('finished');
             this.router.navigate(['/result'], {
                 queryParams: { winner: this.opponentUid, myUid: this.uid },

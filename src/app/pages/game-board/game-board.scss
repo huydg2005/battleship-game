@@ -102,7 +102,7 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(10, $grid-cell-size);
+  grid-template-columns: repeat(15, $grid-cell-size);
   grid-template-rows: repeat(10, $grid-cell-size);
   gap: $grid-gap;
   object-fit: contain;

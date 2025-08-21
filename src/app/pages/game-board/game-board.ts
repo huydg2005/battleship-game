@@ -161,19 +161,29 @@ export class GameBoard implements OnInit, OnDestroy {
     }
 
     getShipStyle(ship: Ship) {
-        const cellSize = 42;
-        return ship.direction === 'horizontal'
-            ? { width: `${ship.positions.length * cellSize}px`, height: `${cellSize}px` }
-            : { width: `${cellSize}px`, height: `${ship.positions.length * cellSize}px` };
+    const cellSize = this.cellSize;
+    const gap = this.gridGap;
+    return ship.direction === 'horizontal'
+        ? { 
+            width: `${ship.positions.length * cellSize + (ship.positions.length - 1) * gap}px`, 
+            height: `${cellSize}px` 
+        }
+        : { 
+            width: `${cellSize}px`, 
+            height: `${ship.positions.length * cellSize + (ship.positions.length - 1) * gap}px` 
+        };
     }
 
     getShipPosition(ship: Ship) {
         const headIndex = Math.min(...ship.positions);
         const row = Math.floor(headIndex / 10);
         const col = headIndex % 10;
+        // Logic mới để tính toán vị trí, chỉ sử dụng kích thước ô và khoảng cách lưới
+        const top = row * (this.cellSize + this.gridGap);
+        const left = col * (this.cellSize + this.gridGap);
         return {
-            top: `${row * (this.cellSize + this.gridGap)}px`,
-            left: `${col * (this.cellSize + this.gridGap)}px`
+            top: `${top}px`,
+            left: `${left}px`
         };
     }
 

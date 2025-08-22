@@ -1,21 +1,78 @@
 .result-container {
   text-align: center;
   padding: 2rem;
-  background-color: #f0f8ff;
-  border-radius: 12px;
-  max-width: 400px;
+  background: rgba(15, 23, 42, 0.8); /* màu xanh đen huyền ảo */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(34, 197, 94, 0.4); /* viền xanh neon nhẹ */
+  border-radius: 1rem;
+  max-width: 420px;
   margin: 3rem auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.2); /* ánh sáng xanh */
+  color: #e5e7eb;
+  font-family: "Orbitron", sans-serif; /* font sci-fi, tactical */
+  letter-spacing: 1px;
 }
 
 .result-message {
-  font-size: 1.5rem;
-  margin: 1rem 0;
+  font-size: 1.75rem;
+  margin: 1.5rem 0;
+  font-weight: 600;
+  color: #22c55e; /* xanh neon nổi bật */
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
 }
-
+.actions {
+  display: flex;
+  flex-direction: column;   /* xếp theo cột */
+  align-items: center;      /* căn giữa ngang */
+  gap: 1rem;                /* khoảng cách giữa 2 nút */
+}
 .actions button {
-  margin: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  width: 60%;  
+  margin: 0.75rem;
+  padding: 0.9rem 1.8rem;
   font-size: 1rem;
   cursor: pointer;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  font-weight: bold;
+  background: transparent;
+  color: #e5e7eb;
+  transition: all 0.3s ease;
+  font-family: "Orbitron", sans-serif;
+  text-transform: uppercase;
+}
+
+.actions button:first-child {
+  background: linear-gradient(145deg, #22c55e, #16a34a);
+  color: #0f172a;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+}
+
+.actions button:first-child:hover {
+  background: linear-gradient(145deg, #16a34a, #15803d);
+  box-shadow: 0 0 18px rgba(34, 197, 94, 0.9);
+}
+
+.actions button:last-child {
+  background: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+}
+
+.actions button:last-child:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e5e7eb;
+}
+
+.video-background {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  filter: brightness(0.35) contrast(1.2) saturate(1.1);
 }

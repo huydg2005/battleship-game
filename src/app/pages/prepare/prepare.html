@@ -1,4 +1,12 @@
-<div class="container">
+<!-- Background video -->
+<div class="background-video">
+  <video autoplay muted loop>
+    <source src="assets/video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<!-- Container chính -->
+<div class="container prepare-container">
   <!-- Sidebar bên trái -->
   <aside class="sidebar">
     <!-- Logo + Thông tin phòng -->
@@ -58,8 +66,8 @@
     <!-- Thanh công cụ -->
     <div class="toolbar">
       <button (click)="rotateDirection()">↻ Xoay</button>
-      <button (click)="placeRandomShips()">🎲 Đặt ngẫu nhiên</button>
-      <button (click)="resetGrid()">🧹 Xóa lưới</button>
+      <button (click)="placeRandomShips()"> Đặt ngẫu nhiên</button>
+      <button (click)="resetGrid()"> Xóa lưới</button>
       <div class="direction">
         Hướng hiện tại:
         <span [ngClass]="direction">
